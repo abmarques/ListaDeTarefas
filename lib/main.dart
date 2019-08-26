@@ -23,7 +23,6 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _readData().then((data){
       setState(() {
@@ -41,6 +40,19 @@ class _HomeState extends State<Home> {
       _toDoList.add(newToDo);
       _saveData();
     });
+  }
+
+  Future<Null> _refresh() async{
+    await Future.delayed(Duration(seconds: 1));
+    setState(() {
+      _toDoList.sort((a, b){
+      if (a["ok"] && !b["ok"]) return 1;
+      else if(!a["ok"] && b["ok"]) return -1;
+      else return 0;
+      });
+      _saveData();     
+    });
+    return null;
   }
 
   @override
@@ -76,14 +88,16 @@ class _HomeState extends State<Home> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.only(top: 10.0),
-              itemCount: _toDoList.length,
-              itemBuilder:buildItem)
-            )
+            child: RefreshIndicator(onRefresh: _refresh,
+              child: ListView.builder(
+                padding: EdgeInsets.only(top: 10.0),
+                itemCount: _toDoList.length,
+                itemBuilder:buildItem
+              )
+            ),
+          )
         ])
     );
-
   }
 
   Widget buildItem(BuildContext context, int index){
@@ -141,13 +155,11 @@ class _HomeState extends State<Home> {
 
   Future<File> _saveData() async{
     String data = json.encode(_toDoList);
-
     final file = await _getFile();
     return file.writeAsString(data);
   }
 
   Future<String> _readData() async{
-
     try {
 
       final file = await _getFile();
