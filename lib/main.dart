@@ -15,6 +15,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final _toDoController = TextEditingController();
   List _toDoList = [];
 
@@ -64,6 +66,7 @@ class _HomeState extends State<Home> {
         centerTitle: true,
       ),
       body: Column(
+        key: _formKey,
         children: <Widget>[
           Container(
             padding: EdgeInsets.fromLTRB(17.0, 1.0, 7.0, 1.0),
@@ -72,7 +75,7 @@ class _HomeState extends State<Home> {
                 Expanded(
                   child: TextField(
                     controller: _toDoController,
-                    decoration: InputDecoration(
+                    decoration: InputDecoration(                    
                     labelText: "Nova Tarefa",
                     labelStyle: TextStyle(color: Colors.blueAccent)
                     ),
@@ -83,7 +86,7 @@ class _HomeState extends State<Home> {
                   child: Text("ADD"),
                   textColor: Colors.white,
                   onPressed: _addToDo,
-                )
+                ),
               ],
             ),
           ),
